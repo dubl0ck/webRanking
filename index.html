@@ -8,6 +8,15 @@
 </head>
 <body>
   <h1>🏃 Ranking de Atletas</h1>
+
+  <!-- Formulario -->
+  <form id="add-result-form">
+    <input type="text" id="athlete-name" placeholder="Nombre del atleta" required>
+    <input type="number" step="0.01" id="athlete-time" placeholder="Tiempo (s)" required>
+    <button type="submit">Añadir resultado</button>
+  </form>
+
+  <!-- Ranking -->
   <div id="ranking">Cargando...</div>
 
   <script type="module" src="app.js"></script>
