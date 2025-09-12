@@ -2,23 +2,61 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Ranking de Atletas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking Atletas</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>🏃 Ranking de Atletas</h1>
 
-  <!-- Formulario -->
-  <form id="add-result-form">
-    <input type="text" id="athlete-name" placeholder="Nombre del atleta" required>
-    <input type="number" step="0.01" id="athlete-time" placeholder="Tiempo (s)" required>
-    <button type="submit">Añadir resultado</button>
+  <form id="marcaForm">
+    <label>Nombre y Apellidos:</label>
+    <input type="text" id="nombre" required>
+
+    <label>Fecha de nacimiento:</label>
+    <input type="date" id="fechaNacimiento" required>
+
+    <label>Sexo:</label>
+    <select id="sexo" required>
+      <option value="">-- Selecciona --</option>
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+    </select>
+
+    <label>Prueba:</label>
+    <select id="prueba" required></select>
+
+    <label>Fecha de la marca:</label>
+    <input type="date" id="fechaMarca" required>
+
+    <label>Marca (tiempo/distancia):</label>
+    <input type="text" id="marca" required placeholder="Ej: 12.34 o 5.67m">
+
+    <label>Instalación/competición:</label>
+    <input type="text" id="instalacion">
+
+    <label>Artefacto / Vallas:</label>
+    <input type="text" id="artefacto" disabled>
+
+    <button type="submit">Guardar Marca</button>
   </form>
 
-  <!-- Ranking -->
-  <div id="ranking">Cargando...</div>
+  <h2>Ranking</h2>
+  <table id="ranking">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Sexo</th>
+        <th>Prueba</th>
+        <th>Marca</th>
+        <th>Fecha</th>
+        <th>Artefacto/Vallas</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <script type="module" src="app.js"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
