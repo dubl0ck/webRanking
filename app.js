@@ -1,31 +1,16 @@
 // app.js
 
+// Referencias DOM
 const form = document.getElementById("marcaForm");
 const tabla = document.querySelector("#ranking tbody");
 const selectPrueba = document.getElementById("prueba");
 const inputArtefacto = document.getElementById("artefacto");
 
-// TODO: JSON de categorías + pruebas (lo rellenaremos)
-const pruebas = {
-  "Sub16": {
-    "H": { "Peso": "4kg", "100m vallas": "0.914m" },
-    "F": { "Peso": "3kg", "100m vallas": "0.762m" }
-  }
-};
+// -----------------------------
+// FUNCIONES
+// -----------------------------
 
-// Rellenar desplegable de pruebas
-function cargarPruebas() {
-  selectPrueba.innerHTML = "";
-  Object.keys(pruebas["Sub16"]["H"]).forEach(p => {
-    let opt = document.createElement("option");
-    opt.value = p;
-    opt.textContent = p;
-    selectPrueba.appendChild(opt);
-  });
-}
-cargarPruebas();
-
-// Calcular categoría
+// Calcular categoría según fecha de nacimiento
 function calcularCategoria(fechaNacimiento) {
   const year = new Date(fechaNacimiento).getFullYear();
   const edad = new Date().getFullYear() - year;
@@ -40,7 +25,60 @@ function calcularCategoria(fechaNacimiento) {
   return "Absoluto";
 }
 
-// Guardar marca
+// Actualizar Artefacto/Vallas automáticamente
+function actualizarArtefacto() {
+  const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+  const sexo = document.getElementById("sexo").value;
+  const prueba = selectPrueba.value;
+
+  if (!fechaNacimiento || !sexo || !prueba) {
+    inputArtefacto.value = "";
+    return;
+  }
+
+  const categoria = calcularCategoria(fechaNacimiento);
+  const infoPrueba = pruebas[categoria]?.[sexo]?.[prueba];
+
+  if (!infoPrueba) {
+    inputArtefacto.value = "";
+    return;
+  }
+
+  let texto = "";
+  if (infoPrueba.peso) texto += `Peso: ${infoPrueba.peso} kg `;
+  if (infoPrueba.altura) texto += `Altura: ${infoPrueba.altura} m `;
+  if (infoPrueba.separacion) texto += `Separación: ${infoPrueba.separacion} m `;
+  if (infoPrueba.vallas) texto += `Vallas: ${infoPrueba.vallas} `;
+
+  inputArtefacto.value = texto.trim();
+}
+
+// Rellenar select de pruebas dinámicamente
+function cargarPruebas() {
+  selectPrueba.innerHTML = '<option value="">-- Selecciona --</option>';
+
+  // Tomamos la primera categoría y sexo como referencia para mostrar pruebas
+  const categoria = "Sub16"; // valor por defecto para mostrar algo
+  const sexo = "M";
+
+  Object.keys(pruebas[categoria][sexo]).forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    selectPrueba.appendChild(opt);
+  });
+}
+
+// -----------------------------
+// EVENTOS
+// -----------------------------
+
+// Cambios que actualizan Artefacto/Vallas
+document.getElementById("fechaNacimiento").addEventListener("change", actualizarArtefacto);
+document.getElementById("sexo").addEventListener("change", actualizarArtefacto);
+selectPrueba.addEventListener("change", actualizarArtefacto);
+
+// Enviar formulario y guardar en Supabase
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -51,9 +89,8 @@ form.addEventListener("submit", async (e) => {
   const fechaMarca = document.getElementById("fechaMarca").value;
   const marca = document.getElementById("marca").value;
   const instalacion = document.getElementById("instalacion").value;
-
   const categoria = calcularCategoria(fechaNacimiento);
-  const artefacto = pruebas[categoria]?.[sexo]?.[prueba] || "";
+  const artefacto = inputArtefacto.value;
 
   // Guardar en Supabase
   const { data, error } = await supabase
@@ -64,14 +101,25 @@ form.addEventListener("submit", async (e) => {
     alert("Error al guardar: " + error.message);
   } else {
     alert("Marca guardada");
+    form.reset();
+    inputArtefacto.value = "";
     cargarRanking();
   }
 });
 
+// -----------------------------
 // Mostrar ranking
+// -----------------------------
 async function cargarRanking() {
-  const { data, error } = await supabase.from("marcas").select("*").order("marca", { ascending: true });
-  if (error) return;
+  const { data, error } = await supabase
+    .from("marcas")
+    .select("*")
+    .order("marca", { ascending: true });
+
+  if (error) {
+    console.error("Error cargando ranking:", error);
+    return;
+  }
 
   tabla.innerHTML = "";
   data.forEach(row => {
@@ -89,4 +137,8 @@ async function cargarRanking() {
   });
 }
 
+// -----------------------------
+// INICIALIZACIÓN
+// -----------------------------
+cargarPruebas();
 cargarRanking();
