@@ -1,4 +1,3 @@
-// app.js
 import { createClient } from 'https://esm.sh/@supabase/supabase-js'
 
 const supabaseUrl = "https://qehhrhsmlrsxqugvuida.supabase.co";
@@ -147,3 +146,4 @@ async function cargarRanking() {
 // -----------------------------
 cargarPruebas();
 cargarRanking();
+
