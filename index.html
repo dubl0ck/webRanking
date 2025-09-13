@@ -2,46 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Ranking Atletas</title>
+  <title>Ranking de Atletas</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Librería Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script src="supabase.js"></script>
 </head>
 <body>
-  <h1>🏃 Ranking de Atletas</h1>
+  <h1>Ranking de Atletas</h1>
 
-  <form id="marcaForm">
-    <label>Nombre y Apellidos:</label>
-    <input type="text" id="nombre" required>
-
-    <label>Fecha de nacimiento:</label>
-    <input type="date" id="fechaNacimiento" required>
-
-    <label>Sexo:</label>
+  <form id="form-atleta">
+    <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
+    <input type="date" id="fecha_nacimiento" required>
     <select id="sexo" required>
-      <option value="">-- Selecciona --</option>
+      <option value="">Sexo</option>
       <option value="M">Masculino</option>
       <option value="F">Femenino</option>
     </select>
-
-    <label>Prueba:</label>
-    <select id="prueba" required></select>
-
-    <label>Fecha de la marca:</label>
-    <input type="date" id="fechaMarca" required>
-
-    <label>Marca (tiempo/distancia):</label>
-    <input type="text" id="marca" required placeholder="Ej: 12.34 o 5.67m">
-
-    <label>Instalación/competición:</label>
-    <input type="text" id="instalacion">
-
-    <label>Artefacto / Vallas:</label>
-    <input type="text" id="artefacto" disabled>
-
-    <button type="submit">Guardar Marca</button>
+    <select id="prueba" required>
+      <option value="">Prueba</option>
+      <option value="100m">100m</option>
+      <option value="200m">200m</option>
+      <option value="longitud">Salto de longitud</option>
+      <option value="peso">Lanzamiento de peso</option>
+    </select>
+    <input type="date" id="fecha_marca" required>
+    <input type="text" id="marca" placeholder="Marca (ej: 10.50 o 5.25)" required>
+    <input type="text" id="instalacion" placeholder="Instalación/competición (opcional)">
+    <button type="submit">Guardar</button>
   </form>
 
-  <h2>Ranking</h2>
-  <table id="ranking">
+  <h2>Registros</h2>
+  <table id="tabla-marcas">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -50,15 +42,12 @@
         <th>Prueba</th>
         <th>Marca</th>
         <th>Fecha</th>
-        <th>Artefacto/Vallas</th>
+        <th>Instalación</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <script src="supabase.js"></script>
-  <script src="pruebas.js"></script>
   <script src="app.js"></script>
-  
 </body>
 </html>
