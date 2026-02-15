@@ -3,22 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <title>Ranking de Atletas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
 </head>
 <body>
-  <h1>🏃 Ranking de Atletas</h1>
+  <h1>Ranking de Atletas</h1>
 
-  <!-- Formulario -->
-  <form id="add-result-form">
-    <input type="text" id="athlete-name" placeholder="Nombre del atleta" required>
-    <input type="number" step="0.01" id="athlete-time" placeholder="Tiempo (s)" required>
-    <button type="submit">Añadir resultado</button>
+  <form id="form-atleta">
+    <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
+    <input type="date" id="fecha_nacimiento" required>
+    <select id="sexo" required>
+      <option value="">Sexo</option>
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+    </select>
+    <select id="prueba" required>
+      <option value="">Prueba</option>
+      <option value="100m">100m</option>
+      <option value="200m">200m</option>
+      <option value="longitud">Salto de longitud</option>
+      <option value="peso">Lanzamiento de peso</option>
+    </select>
+    <input type="date" id="fecha_marca" required>
+    <input type="text" id="marca" placeholder="Marca (ej: 10.50 o 5.25)" required>
+    <input type="text" id="instalacion" placeholder="Instalación/competición (opcional)">
+    <button type="submit">Guardar</button>
   </form>
 
-  <!-- Ranking -->
-  <div id="ranking">Cargando...</div>
+  <h2>Registros</h2>
+  <table id="tabla-marcas">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Sexo</th>
+        <th>Prueba</th>
+        <th>Marca</th>
+        <th>Fecha</th>
+        <th>Instalación</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,47 +1,24 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  color: #333;
-  text-align: center;
+  background: #f2f2f2;
   padding: 20px;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
 form {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
-form input, form button {
-  padding: 8px;
-  margin: 5px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-form button {
-  background: #4CAF50;
-  color: white;
-  cursor: pointer;
-  border: none;
-}
-
-form button:hover {
-  background: #45a049;
-}
-
-#ranking {
+table {
+  width: 100%;
+  border-collapse: collapse;
   background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  display: inline-block;
-  text-align: left;
 }
 
-#ranking p {
-  margin: 8px 0;
-  font-size: 18px;
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
 }

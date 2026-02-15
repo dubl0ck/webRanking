@@ -1,72 +1,68 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// ⚠️ Sustituye por tus credenciales de Supabase
-const SUPABASE_URL = "https://zxipywyhobtlxaaerazi.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4aXB5d3lob2J0bHhhYWVyYXppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMzE5ODYsImV4cCI6MjA3MjkwNzk4Nn0.YB_mgNKRBrJ8-Z7jnT5_xeQV0zrmAiRqVZ8JqgLxjVs"; 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-
-// Obtener resultados ordenados
-async function getRanking() {
-  const { data, error } = await supabase
-    .from("results")
-    .select("*")
-    .order("time_seconds", { ascending: true });
-
-  if (error) {
-    console.error("Error obteniendo datos:", error);
-    document.getElementById("ranking").innerHTML = "<p>Error cargando ranking</p>";
-    return;
-  }
-
-  renderRanking(data);
+// Calcular categoría automáticamente
+function calcularCategoria(fechaNacimiento) {
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  const edad = hoy.getFullYear() - nacimiento.getFullYear();
+  if (edad < 12) return "Sub12";
+  if (edad < 14) return "Sub14";
+  if (edad < 16) return "Sub16";
+  if (edad < 18) return "Sub18";
+  if (edad < 20) return "Sub20";
+  return "Senior";
 }
 
-// Insertar nuevo resultado
-async function addResult(name, time) {
-  const { error } = await supabase
-    .from("results")
-    .insert([{ athlete_name: name, time_seconds: time }]);
-
-  if (error) {
-    console.error("Error insertando:", error);
-    alert("❌ No se pudo añadir el resultado.");
-  } else {
-    alert("✅ Resultado añadido correctamente!");
-    getRanking(); // recargar el ranking
-  }
-}
-
-// Renderizar ranking
-function renderRanking(results) {
-  const container = document.getElementById("ranking");
-  
-  if (!results.length) {
-    container.innerHTML = "<p>No hay resultados todavía.</p>";
-    return;
-  }
-
-  container.innerHTML = results
-    .map((r, i) => `<p><strong>${i+1}.</strong> ${r.athlete_name} - ${r.time_seconds}s</p>`)
-    .join("");
-}
-
-// Manejo del formulario
-document.getElementById("add-result-form").addEventListener("submit", async (e) => {
+// Guardar marca en Supabase
+document.getElementById("form-atleta").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = document.getElementById("athlete-name").value.trim();
-  const time = parseFloat(document.getElementById("athlete-time").value);
 
-  if (!name || isNaN(time)) {
-    alert("⚠️ Por favor, rellena todos los campos correctamente.");
-    return;
+  const nombre = document.getElementById("nombre").value;
+  const fecha_nacimiento = document.getElementById("fecha_nacimiento").value;
+  const sexo = document.getElementById("sexo").value;
+  const prueba = document.getElementById("prueba").value;
+  const fecha_marca = document.getElementById("fecha_marca").value;
+  const marca = document.getElementById("marca").value;
+  const instalacion = document.getElementById("instalacion").value;
+
+  const categoria = calcularCategoria(fecha_nacimiento);
+
+  const { error } = await supabase.from("marcas").insert([
+    { nombre, fecha_nacimiento, sexo, prueba, fecha_marca, marca, instalacion, categoria }
+  ]);
+
+  if (error) {
+    alert("Error al guardar: " + error.message);
+  } else {
+    alert("Marca guardada correctamente");
+    cargarMarcas();
+    e.target.reset();
   }
-
-  await addResult(name, time);
-
-  // limpiar inputs
-  document.getElementById("athlete-name").value = "";
-  document.getElementById("athlete-time").value = "";
 });
 
-getRanking();
+// Cargar registros
+async function cargarMarcas() {
+  const { data, error } = await supabase.from("marcas").select("*").order("fecha_marca", { ascending: false });
+
+  if (error) {
+    console.error("Error al cargar marcas:", error);
+    return;
+  }
+
+  const tbody = document.querySelector("#tabla-marcas tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.nombre}</td>
+      <td>${row.categoria}</td>
+      <td>${row.sexo}</td>
+      <td>${row.prueba}</td>
+      <td>${row.marca}</td>
+      <td>${row.fecha_marca}</td>
+      <td>${row.instalacion || ""}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+cargarMarcas();
